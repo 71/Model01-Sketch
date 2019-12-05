@@ -151,9 +151,9 @@ KEYMAPS(
 
    [AUX] = KEYMAP
    (___, ___, ___, ___, ___, ___, ___,           Key_Esc, ___, ___, ___, ___, ___, ___,
-    ___, ___, ___, ___, ___, ___, ___,           ___,     ___, Key_1, Key_Keypad2, Key_Keypad3, ___, ___,
-    ___, ___, ___, ___, ___, ___,                 Key_Keypad0, Key_Keypad4, Key_Keypad5, Key_Keypad6, ___, ___,
-    ___, ___, ___, ___, ___, ___, ___,           ___,     ___, Key_Keypad7, Key_Keypad8, Key_Keypad9, ___, Key_Enter,
+    ___, ___, ___, ___, ___, ___, ___,           ___,     ___,         Key_Keypad1, Key_Keypad2, Key_Keypad3, ___, ___,
+    ___, ___, ___, ___, ___, ___,                         Key_Keypad0, Key_Keypad4, Key_Keypad5, Key_Keypad6, ___, ___,
+    ___, ___, ___, ___, ___, ___, ___,           ___,     ___,         Key_Keypad7, Key_Keypad8, Key_Keypad9, ___, Key_Enter,
     ___, ___, ___, ___,                          ___,     ___, ___, ___,
     ___,                                         ___)
 )
@@ -203,6 +203,22 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
   }
 
   return MACRO_NONE;
+}
+
+static void insertRepo(uint8_t seq_index) {
+  Macros.type(PSTR("https://github.com/71/Model01-Sketch"));
+}
+
+static void insertShrug(uint8_t seq_index) {
+  Unicode.type(0xaf);
+  Unicode.type(0x5c);
+  Unicode.type(0x5f);
+  Unicode.type(0x28);
+  Unicode.type(0x30c4);
+  Unicode.type(0x29);
+  Unicode.type(0x5f);
+  Unicode.type(0x2f);
+  Unicode.type(0xaf);
 }
 
 /** toggleLedsOnSuspendResume toggles the LEDs off when the host goes to sleep,
@@ -330,6 +346,7 @@ KALEIDOSCOPE_INIT_PLUGINS(
 
   // The macros plugin adds support for macros
   Macros,
+  Leader,
 
   // The MouseKeys plugin lets you add keys to your keymap which move the mouse.
   MouseKeys,
@@ -367,6 +384,7 @@ void setup() {
   // many editable layers we have (see above).
   ColormapEffect.max_layers(3);
 
+  // Register custom keys.
   REGISTER_CUSTOM_KEYS(
     CustomKey_2Underscore,
     CustomKey_3Minus,
@@ -380,6 +398,13 @@ void setup() {
     CustomKey_TimesAt,
     CustomKey_CommaLParen,
     CustomKey_PeriodRParen);
+
+  // Register leader.
+  static const kaleidoscope::plugin::Leader::dictionary_t leader_dictionary[] PROGMEM =
+    LEADER_DICT({ LEADER_SEQ(LEAD(0), Key_R), insertRepo },
+                { LEADER_SEQ(LEAD(0), Key_S), insertShrug });
+
+  Leader.dictionary = leader_dictionary;
 }
 
 void loop() {
