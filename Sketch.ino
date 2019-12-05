@@ -43,6 +43,7 @@
   */
 enum { MACRO_VERSION_INFO,
        MACRO_CHANGE_OS,
+       MACRO_TO_AUX_LAYER,
      };
 
 
@@ -95,6 +96,7 @@ enum { MACRO_VERSION_INFO,
   */
 enum { PRIMARY,
        FUNCTION,
+       AUX,
      };
 
 
@@ -130,9 +132,9 @@ KEYMAPS(
                       Key_F,       Key_S, Key_N,      Key_O,                Key_I,               ___,
    SYSTER,            Key_J,       Key_R, Key_C,      Key_Semicolon,        Key_Quote,           ___,
    Key_RightShift,    Key_LeftAlt, Key_Spacebar,      Key_Enter,
-   ShiftToLayer(FUNCTION)),
+   M(MACRO_TO_AUX_LAYER)),
 
-  [FUNCTION] =  KEYMAP_STACKED
+  [FUNCTION] = KEYMAP_STACKED
   (XXX,              Key_F1,           Key_F2,      Key_F3,     Key_F4,               Key_F5,                Key_LEDEffectNext,
    Key_Tab,          XXX,              Key_mouseUp, XXX,        Key_LeftBracket,      Key_RightBracket,      XXX,
    Key_Home,         Key_mouseL,       Key_mouseDn, Key_mouseR, Key_LeftCurlyBracket, Key_RightCurlyBracket,
@@ -145,24 +147,19 @@ KEYMAPS(
                        Key_LeftArrow,              Key_DownArrow,            Key_UpArrow,              Key_RightArrow,         XXX,                     XXX,
    Key_mouseScrollDn,  XXX,                        Key_BacklightDown,        Key_BacklightUp,          XXX,                    XXX,                     XXX,
    Key_mouseBtnL,      Key_Lang1,                  Key_mouseBtnR,            Key_mouseBtnM,
-   ___)
+   ___),
+
+   [AUX] = KEYMAP
+   (___, ___, ___, ___, ___, ___, ___,           Key_Esc, ___, ___, ___, ___, ___, ___,
+    ___, ___, ___, ___, ___, ___, ___,           ___,     ___, Key_1, Key_Keypad2, Key_Keypad3, ___, ___,
+    ___, ___, ___, ___, ___, ___,                 Key_Keypad0, Key_Keypad4, Key_Keypad5, Key_Keypad6, ___, ___,
+    ___, ___, ___, ___, ___, ___, ___,           ___,     ___, Key_Keypad7, Key_Keypad8, Key_Keypad9, ___, Key_Enter,
+    ___, ___, ___, ___,                          ___,     ___, ___, ___,
+    ___,                                         ___)
 )
 
 /* Re-enable astyle's indent enforcement */
 // *INDENT-ON*
-
-
-
-/** versionInfoMacro handles the 'firmware version info' macro
- *  When a key bound to the macro is pressed, this macro
- *  prints out the firmware build information as virtual keystrokes
- */
-static void versionInfoMacro(uint8_t keyState) {
-  if (keyToggledOn(keyState)) {
-    Macros.type(PSTR("Keyboardio Model 01 - Kaleidoscope "));
-    Macros.type(PSTR(BUILD_INFORMATION));
-  }
-}
 
 
 /** macroAction dispatches keymap events that are tied to a macro
@@ -180,15 +177,31 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
   switch (macroIndex) {
 
   case MACRO_VERSION_INFO:
-    versionInfoMacro(keyState);
+    if (keyToggledOn(keyState)) {
+      Macros.type(PSTR("Keyboardio Model 01 - Kaleidoscope "));
+      Macros.type(PSTR(BUILD_INFORMATION));
+    }
     break;
 
   case MACRO_CHANGE_OS:
-    HostOS.os(HostOS.os() == kaleidoscope::hostos::LINUX   ? kaleidoscope::hostos::WINDOWS
-            : HostOS.os() == kaleidoscope::hostos::WINDOWS ? kaleidoscope::hostos::OSX
-            :                                                kaleidoscope::hostos::LINUX);
+    if (keyToggledOn(keyState)) {
+      HostOS.os(HostOS.os() == kaleidoscope::hostos::LINUX   ? kaleidoscope::hostos::WINDOWS
+              : HostOS.os() == kaleidoscope::hostos::WINDOWS ? kaleidoscope::hostos::OSX
+              :                                                kaleidoscope::hostos::LINUX);
+    }
+    break;
+
+  case MACRO_TO_AUX_LAYER:
+    if (keyToggledOn(keyState)) {
+      Layer.activate(FUNCTION);
+      Layer.activate(AUX);
+    } else if (keyToggledOff(keyState)) {
+      Layer.deactivate(AUX);
+      Layer.deactivate(FUNCTION);
+    }
     break;
   }
+
   return MACRO_NONE;
 }
 
