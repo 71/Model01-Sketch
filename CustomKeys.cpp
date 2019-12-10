@@ -1,7 +1,7 @@
 #include "CustomKeys.h"
 
-kaleidoscope::EventHandlerResult CustomKeys::onKeyswitchEvent(Key& mapped_key, byte row, byte col, uint8_t key_state) {
-  if (mapped_key == Key_LeftShift ||  mapped_key == Key_RightShift) {
+kaleidoscope::EventHandlerResult CustomKeys::onKeyswitchEvent(Key& mapped_key, KeyAddr key_addr, uint8_t key_state) {
+  if (mapped_key == Key_LeftShift || mapped_key == Key_RightShift) {
     is_shifted_ = keyIsPressed(key_state);
 
     if (is_active_)
@@ -13,7 +13,7 @@ kaleidoscope::EventHandlerResult CustomKeys::onKeyswitchEvent(Key& mapped_key, b
   uint8_t i = 0;
 
   for (;;) {
-    orig.raw = pgm_read_word(&(custom_keys_[i].appear_as.raw));
+    orig.raw = pgm_read_word(&custom_keys_[i].appear_as.raw);
 
     if (orig.raw == Key_NoKey.raw)
       return kaleidoscope::EventHandlerResult::OK;
@@ -28,7 +28,7 @@ kaleidoscope::EventHandlerResult CustomKeys::onKeyswitchEvent(Key& mapped_key, b
 
   // We found it, so now we manipulate keys to make things work well.
   if (is_shifted_) {
-    mapped_key = { .raw = pgm_read_word(&(custom_keys_[i].shifted.raw)) };
+    mapped_key = { .raw = pgm_read_word(&custom_keys_[i].shifted.raw) };
 
     // If the custom key requires Shift to not be pressed, we have to virtually release it here.
     if (!(mapped_key.flags & SHIFT_HELD)) {
@@ -40,7 +40,7 @@ kaleidoscope::EventHandlerResult CustomKeys::onKeyswitchEvent(Key& mapped_key, b
       }
     }
   } else {
-    mapped_key = { .raw = pgm_read_word(&(custom_keys_[i].unshifted.raw)) };
+    mapped_key = { .raw = pgm_read_word(&custom_keys_[i].unshifted.raw) };
 
     // If the custom key requires Shift to be pressed, there is actually nothing to do,
     // since the SHIFT_HELD flag will be passed along the key.

@@ -27,7 +27,7 @@ class CustomKeys : public kaleidoscope::Plugin {
  public:
   CustomKeys() {}
 
-  kaleidoscope::EventHandlerResult onKeyswitchEvent(Key& mapped_key, byte row, byte col, uint8_t key_state);
+  kaleidoscope::EventHandlerResult onKeyswitchEvent(Key& mapped_key, KeyAddr key_addr, uint8_t key_state);
 
   void setCustomKeys(const CustomKey* customKeys) {
     custom_keys_ = customKeys;

@@ -43,7 +43,8 @@
   */
 enum { MACRO_VERSION_INFO,
        MACRO_CHANGE_OS,
-       MACRO_TO_AUX_LAYER,
+       MACRO_TO_AUX_LAYER_1,
+       MACRO_TO_AUX_LAYER_2,
      };
 
 
@@ -125,14 +126,14 @@ KEYMAPS(
    Key_PageUp,      Key_A,         Key_T,                 Key_H,            Key_E,                 Key_B,
    Key_PageDown,    Key_P,         Key_V,                 Key_G,            Key_W,                 Key_K,                  LEAD(0),
    Key_LeftControl, Key_Backspace, Key_LeftGui,           Key_LeftShift,
-   ShiftToLayer(FUNCTION),
+   M(MACRO_TO_AUX_LAYER_1),
 
    CustomKey_TimesAt, Key_6,       CustomKey_7Equals, CustomKey_8Ampersand, CustomKey_9Question, CustomKey_0Hash, ___,
    Key_Enter,         Key_Z,       Key_Q, Key_M,      Key_L,                Key_U,               ___,
                       Key_F,       Key_S, Key_N,      Key_O,                Key_I,               ___,
    SYSTER,            Key_J,       Key_R, Key_C,      Key_Semicolon,        Key_Quote,           ___,
    Key_RightShift,    Key_LeftAlt, Key_Spacebar,      Key_Enter,
-   M(MACRO_TO_AUX_LAYER)),
+   M(MACRO_TO_AUX_LAYER_2)),
 
   [FUNCTION] = KEYMAP_STACKED
   (XXX,              Key_F1,           Key_F2,      Key_F3,     Key_F4,               Key_F5,                Key_LEDEffectNext,
@@ -174,6 +175,9 @@ KEYMAPS(
 
  */
 const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
+  static bool isFn1Pressed = false;
+  static bool isFn2Pressed = false;
+
   switch (macroIndex) {
 
   case MACRO_VERSION_INFO:
@@ -191,15 +195,35 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
     }
     break;
 
-  case MACRO_TO_AUX_LAYER:
+  case MACRO_TO_AUX_LAYER_1:
     if (keyToggledOn(keyState)) {
-      Layer.activate(FUNCTION);
-      Layer.activate(AUX);
+      isFn1Pressed = true;
     } else if (keyToggledOff(keyState)) {
-      Layer.deactivate(AUX);
-      Layer.deactivate(FUNCTION);
+      isFn1Pressed = false;
     }
-    break;
+    goto toggleNumpad;
+
+  case MACRO_TO_AUX_LAYER_2:
+    if (keyToggledOn(keyState)) {
+      isFn2Pressed = true;
+    } else if (keyToggledOff(keyState)) {
+      isFn2Pressed = false;
+    }
+    goto toggleNumpad;
+  }
+
+  return MACRO_NONE;
+
+toggleNumpad:
+  Layer.deactivate(AUX);
+  Layer.deactivate(FUNCTION);
+
+  if (isFn1Pressed || isFn2Pressed) {
+    Layer.activate(FUNCTION);
+
+    if (isFn1Pressed && isFn2Pressed) {
+      Layer.activate(AUX);
+    }
   }
 
   return MACRO_NONE;
@@ -270,7 +294,7 @@ void systerAction(kaleidoscope::plugin::Syster::action_t action, const char *sym
 
       for (unsigned i = 1; symbol[i]; i++) {
         if (symbol[i] >= '0' && symbol[i] <= '9')
-          u = u * 10 + symbol[i] - '0';
+          u = u * 10 - '0' + symbol[i];
         else
           return;
       }
@@ -281,9 +305,9 @@ void systerAction(kaleidoscope::plugin::Syster::action_t action, const char *sym
 
       for (unsigned i = 1; symbol[i]; i++) {
         if (symbol[i] >= '0' && symbol[i] <= '9')
-          u = u * 16 + symbol[i] - '0';
+          u = u * 16 - '0' + symbol[i];
         else if (symbol[i] >= 'a' && symbol[i] <= 'f')
-          u = u * 16 + symbol[i] - 'a' + 10;
+          u = u * 16 - 'a' + symbol[i] + 10;
         else
           return;
       }
@@ -355,13 +379,13 @@ KALEIDOSCOPE_INIT_PLUGINS(
   // goes to sleep, and resume them when it wakes up.
   HostPowerManagement,
 
+  // Allow custom keys to be created.
+  CustomKeys,
+
   // Allow arbitrary unicode to be sent to the OS.
   HostOS,
   Unicode,
-  Syster,
-
-  // Allow custom keys to be created.
-  CustomKeys
+  Syster
 );
 
 
