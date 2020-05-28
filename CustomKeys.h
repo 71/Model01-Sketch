@@ -35,7 +35,7 @@ class CustomKeys : public kaleidoscope::Plugin {
 
  private:
   const CustomKey* custom_keys_;
-  bool is_active_, is_shifted_;
+  bool is_active_, is_shifted_, will_unshift_;
 };
 
 extern CustomKeys CustomKeys;

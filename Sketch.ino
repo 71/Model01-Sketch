@@ -45,6 +45,8 @@ enum { MACRO_VERSION_INFO,
        MACRO_CHANGE_OS,
        MACRO_TO_AUX_LAYER_1,
        MACRO_TO_AUX_LAYER_2,
+       MACRO_TO_GUI,
+       MACRO_FROM_GUI,
      };
 
 
@@ -98,6 +100,7 @@ enum { MACRO_VERSION_INFO,
 enum { PRIMARY,
        FUNCTION,
        AUX,
+       GUI,
      };
 
 
@@ -106,47 +109,44 @@ enum { PRIMARY,
  */
 // *INDENT-OFF*
 
-DEFINE_CUSTOM_KEY(2Underscore,  Key_2,              LSHIFT(Key_Minus), Consumer_MediaSelection);
-DEFINE_CUSTOM_KEY(3Minus,       Key_3,              Key_Minus,         Consumer_MediaSelectComputer);
+DEFINE_CUSTOM_KEY(2Minus,       Key_2,              Key_Minus,         Consumer_MediaSelection);
+DEFINE_CUSTOM_KEY(3Underscore,  Key_3,              LSHIFT(Key_Minus), Consumer_MediaSelectComputer);
 DEFINE_CUSTOM_KEY(4Slash,       Key_4,              Key_Slash,         Consumer_MediaSelectTV);
 DEFINE_CUSTOM_KEY(5Pipe,        Key_5,              Key_Pipe,          Consumer_MediaSelectWww);
-DEFINE_CUSTOM_KEY(7Equals,      Key_7,              Key_Equals,        Consumer_MediaSelectDvd);
-DEFINE_CUSTOM_KEY(8Ampersand,   Key_8,              LSHIFT(Key_7),     Consumer_MediaSelectTelephone);
+DEFINE_CUSTOM_KEY(8Equals,      Key_8,              Key_Equals,        Consumer_MediaSelectTelephone);
 DEFINE_CUSTOM_KEY(9Question,    Key_9,              LSHIFT(Key_Slash), Consumer_MediaSelectProgramGuide);
 DEFINE_CUSTOM_KEY(0Hash,        Key_0,              LSHIFT(Key_3),     Consumer_MediaSelectVideoPhone);
 DEFINE_CUSTOM_KEY(PlusDollar,   LSHIFT(Key_Equals), LSHIFT(Key_4),     Consumer_MediaSelectMessages);
 DEFINE_CUSTOM_KEY(TimesAt,      LSHIFT(Key_8),      LSHIFT(Key_2),     Consumer_MediaSelectGames);
-DEFINE_CUSTOM_KEY(CommaLParen,  Key_Comma,          LSHIFT(Key_9),     Consumer_MediaSelectCd);
-DEFINE_CUSTOM_KEY(PeriodRParen, Key_Period,         LSHIFT(Key_0),     Consumer_MediaSelectVcr);
 
 KEYMAPS(
   [PRIMARY] = KEYMAP_STACKED
-  (Key_Escape,      Key_1,         CustomKey_2Underscore, CustomKey_3Minus, CustomKey_4Slash,      CustomKey_5Pipe,        CustomKey_PlusDollar,
-   Key_Backtick,    Key_X,         Key_Y,                 Key_D,            CustomKey_CommaLParen, CustomKey_PeriodRParen, Key_Tab,
-   Key_PageUp,      Key_A,         Key_T,                 Key_H,            Key_E,                 Key_B,
-   Key_PageDown,    Key_P,         Key_V,                 Key_G,            Key_W,                 Key_K,                  LEAD(0),
-   Key_LeftControl, Key_Backspace, Key_LeftGui,           Key_LeftShift,
+  (Key_Escape,      Key_1,         CustomKey_2Minus, CustomKey_3Underscore, CustomKey_4Slash, CustomKey_5Pipe,      CustomKey_PlusDollar,
+   ___,             Key_X,         Key_Y,            Key_D,                 Key_Comma,        Key_Period, Key_Tab,
+   Key_PageUp,      Key_A,         Key_T,            Key_H,                 Key_E,            Key_B,
+   Key_PageDown,    Key_P,         Key_V,            Key_G,                 Key_W,            Key_K,                LEAD(0),
+   Key_LeftShift,   Key_Backspace, Key_Spacebar,     Key_LeftControl,
    M(MACRO_TO_AUX_LAYER_1),
 
-   CustomKey_TimesAt, Key_6,       CustomKey_7Equals, CustomKey_8Ampersand, CustomKey_9Question, CustomKey_0Hash, ___,
-   Key_Enter,         Key_Z,       Key_Q, Key_M,      Key_L,                Key_U,               ___,
-                      Key_F,       Key_S, Key_N,      Key_O,                Key_I,               ___,
-   SYSTER,            Key_J,       Key_R, Key_C,      Key_Semicolon,        Key_Quote,           ___,
-   Key_RightShift,    Key_LeftAlt, Key_Spacebar,      Key_Enter,
+   CustomKey_TimesAt, Key_6,        Key_7,        CustomKey_8Equals, CustomKey_9Question, CustomKey_0Hash, ___,
+   Key_RightControl,  Key_Z,        Key_Q, Key_M, Key_L,             Key_U,               ___,
+                      Key_F,        Key_S, Key_N, Key_O,             Key_I,               ___,
+   SYSTER,            Key_J,        Key_R, Key_C, Key_Semicolon,     Key_Quote,           ___,
+   Key_LeftAlt,       Key_Spacebar, Key_Enter,    Key_RightShift,
    M(MACRO_TO_AUX_LAYER_2)),
 
   [FUNCTION] = KEYMAP_STACKED
-  (XXX,              Key_F1,           Key_F2,      Key_F3,     Key_F4,               Key_F5,                Key_LEDEffectNext,
-   Key_Tab,          XXX,              Key_mouseUp, XXX,        Key_LeftBracket,      Key_RightBracket,      XXX,
-   Key_Home,         Key_mouseL,       Key_mouseDn, Key_mouseR, Key_LeftCurlyBracket, Key_RightCurlyBracket,
-   Key_End,          Key_PrintScreen,  XXX,         XXX,        LSHIFT(Key_Comma),    LSHIFT(Key_Period),    XXX,
-   Key_RightControl, Key_Delete,       XXX,         XXX,
+  (XXX,              Key_F1,           Key_F2,        Key_F3,          Key_F4,               Key_F5,                Key_LEDEffectNext,
+   Key_Tab,          XXX,              Key_mouseUp,   XXX,             LSHIFT(Key_9),        LSHIFT(Key_0),         XXX,
+   Key_Home,         Key_mouseL,       Key_mouseDn,   Key_mouseR,      Key_LeftBracket,      Key_RightBracket,
+   Key_End,          Key_PrintScreen,  Key_Backtick,  Key_Backslash,   Key_LeftCurlyBracket, Key_RightCurlyBracket, XXX,
+   Key_RightControl, Key_Delete,       XXX,           M(MACRO_TO_GUI),
    ___,
 
    M(MACRO_CHANGE_OS), Key_F6,                     Key_F7,                   Key_F8,                   Key_F9,                 Key_F10,                 Key_F11,
    Key_mouseScrollUp,  Consumer_ScanPreviousTrack, Consumer_VolumeDecrement, Consumer_VolumeIncrement, Consumer_ScanNextTrack, Consumer_PlaySlashPause, Key_F12,
-                       Key_LeftArrow,              Key_DownArrow,            Key_UpArrow,              Key_RightArrow,         XXX,                     XXX,
-   Key_mouseScrollDn,  XXX,                        Key_BacklightDown,        Key_BacklightUp,          XXX,                    XXX,                     XXX,
+                       XXX,                        Key_LeftArrow,            Key_DownArrow,            Key_UpArrow,            Key_RightArrow,          XXX,
+   Key_mouseScrollDn,  XXX,                        Key_BacklightDown,        Key_BacklightUp,          XXX,                    Key_Tab,                 XXX,
    Key_mouseBtnL,      Key_Lang1,                  Key_mouseBtnR,            Key_mouseBtnM,
    ___),
 
@@ -174,9 +174,10 @@ KEYMAPS(
     Each 'case' statement should call out to a function to handle the macro in question.
 
  */
-const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
+const macro_t* macroAction(uint8_t macroIndex, uint8_t keyState) {
   static bool isFn1Pressed = false;
   static bool isFn2Pressed = false;
+  static bool isInGui = false;
 
   switch (macroIndex) {
 
@@ -192,6 +193,27 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
       HostOS.os(HostOS.os() == kaleidoscope::hostos::LINUX   ? kaleidoscope::hostos::WINDOWS
               : HostOS.os() == kaleidoscope::hostos::WINDOWS ? kaleidoscope::hostos::OSX
               :                                                kaleidoscope::hostos::LINUX);
+    }
+    break;
+
+  case MACRO_TO_GUI:
+    if (keyToggledOn(keyState)) {
+      isInGui = true;
+
+      Layer.deactivate(FUNCTION);
+
+      kaleidoscope::hid::pressRawKey(Key_LeftGui);
+      kaleidoscope::hid::sendKeyboardReport();
+    } else if (keyToggledOff(keyState)) {
+      isInGui = false;
+
+      Layer.activate(FUNCTION);
+
+      kaleidoscope::hid::releaseRawKey(Key_LeftGui);
+      kaleidoscope::hid::sendKeyboardReport();
+    } else if (keyIsPressed(keyState)) {
+      kaleidoscope::hid::pressRawKey(Key_LeftGui);
+      kaleidoscope::hid::sendKeyboardReport();      
     }
     break;
 
@@ -215,6 +237,9 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
   return MACRO_NONE;
 
 toggleNumpad:
+  if (isInGui)
+    return MACRO_NONE;
+
   Layer.deactivate(AUX);
   Layer.deactivate(FUNCTION);
 
@@ -410,18 +435,15 @@ void setup() {
 
   // Register custom keys.
   REGISTER_CUSTOM_KEYS(
-    CustomKey_2Underscore,
-    CustomKey_3Minus,
+    CustomKey_2Minus,
+    CustomKey_3Underscore,
     CustomKey_4Slash,
     CustomKey_5Pipe,
-    CustomKey_7Equals,
-    CustomKey_8Ampersand,
+    CustomKey_8Equals,
     CustomKey_9Question,
     CustomKey_0Hash,
     CustomKey_PlusDollar,
-    CustomKey_TimesAt,
-    CustomKey_CommaLParen,
-    CustomKey_PeriodRParen);
+    CustomKey_TimesAt);
 
   // Register leader.
   static const kaleidoscope::plugin::Leader::dictionary_t leader_dictionary[] PROGMEM =

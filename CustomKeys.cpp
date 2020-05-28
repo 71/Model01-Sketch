@@ -2,10 +2,12 @@
 
 kaleidoscope::EventHandlerResult CustomKeys::onKeyswitchEvent(Key& mapped_key, KeyAddr key_addr, uint8_t key_state) {
   if (mapped_key == Key_LeftShift || mapped_key == Key_RightShift) {
-    is_shifted_ = keyIsPressed(key_state);
+    will_unshift_ = !keyIsPressed(key_state);
 
     if (is_active_)
       return kaleidoscope::EventHandlerResult::EVENT_CONSUMED;
+    else
+      is_shifted_ = keyIsPressed(key_state);
   }
 
   // Try to find the current key in the dictionary
@@ -25,6 +27,15 @@ kaleidoscope::EventHandlerResult CustomKeys::onKeyswitchEvent(Key& mapped_key, K
   }
 
   is_active_ = keyIsPressed(key_state);
+
+  if (!is_active_) {
+    if (will_unshift_)
+      is_shifted_ = false;
+
+    will_unshift_ = false;
+
+    return kaleidoscope::EventHandlerResult::OK;
+  }
 
   // We found it, so now we manipulate keys to make things work well.
   if (is_shifted_) {
