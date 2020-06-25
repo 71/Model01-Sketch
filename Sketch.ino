@@ -116,19 +116,19 @@ DEFINE_CUSTOM_KEY(5Pipe,        Key_5,              Key_Pipe,          Consumer_
 DEFINE_CUSTOM_KEY(8Equals,      Key_8,              Key_Equals,        Consumer_MediaSelectTelephone);
 DEFINE_CUSTOM_KEY(9Question,    Key_9,              LSHIFT(Key_Slash), Consumer_MediaSelectProgramGuide);
 DEFINE_CUSTOM_KEY(0Hash,        Key_0,              LSHIFT(Key_3),     Consumer_MediaSelectVideoPhone);
-DEFINE_CUSTOM_KEY(PlusDollar,   LSHIFT(Key_Equals), LSHIFT(Key_4),     Consumer_MediaSelectMessages);
-DEFINE_CUSTOM_KEY(TimesAt,      LSHIFT(Key_8),      LSHIFT(Key_2),     Consumer_MediaSelectGames);
+DEFINE_CUSTOM_KEY(TimesDollar,  LSHIFT(Key_8),      LSHIFT(Key_4),     Consumer_MediaSelectMessages);
+DEFINE_CUSTOM_KEY(PlusAt,       LSHIFT(Key_Equals), LSHIFT(Key_2),     Consumer_MediaSelectGames);
 
 KEYMAPS(
   [PRIMARY] = KEYMAP_STACKED
-  (Key_Escape,      Key_1,         CustomKey_2Minus, CustomKey_3Underscore, CustomKey_4Slash, CustomKey_5Pipe,      CustomKey_PlusDollar,
-   ___,             Key_X,         Key_Y,            Key_D,                 Key_Comma,        Key_Period, Key_Tab,
+  (Key_Escape,      Key_1,         CustomKey_2Minus, CustomKey_3Underscore, CustomKey_4Slash, CustomKey_5Pipe,      CustomKey_TimesDollar,
+   LSHIFT(Key_5),   Key_X,         Key_Y,            Key_D,                 Key_Comma,        Key_Period, Key_Tab,
    Key_PageUp,      Key_A,         Key_T,            Key_H,                 Key_E,            Key_B,
    Key_PageDown,    Key_P,         Key_V,            Key_G,                 Key_W,            Key_K,                LEAD(0),
    Key_LeftShift,   Key_Backspace, Key_Spacebar,     Key_LeftControl,
    M(MACRO_TO_AUX_LAYER_1),
 
-   CustomKey_TimesAt, Key_6,        Key_7,        CustomKey_8Equals, CustomKey_9Question, CustomKey_0Hash, ___,
+   CustomKey_PlusAt,  Key_6,        Key_7,        CustomKey_8Equals, CustomKey_9Question, CustomKey_0Hash, ___,
    Key_RightControl,  Key_Z,        Key_Q, Key_M, Key_L,             Key_U,               ___,
                       Key_F,        Key_S, Key_N, Key_O,             Key_I,               ___,
    SYSTER,            Key_J,        Key_R, Key_C, Key_Semicolon,     Key_Quote,           ___,
@@ -207,7 +207,9 @@ const macro_t* macroAction(uint8_t macroIndex, uint8_t keyState) {
     } else if (keyToggledOff(keyState)) {
       isInGui = false;
 
-      Layer.activate(FUNCTION);
+      if (isFn1Pressed || isFn2Pressed) {
+        Layer.activate(FUNCTION);
+      }
 
       kaleidoscope::hid::releaseRawKey(Key_LeftGui);
       kaleidoscope::hid::sendKeyboardReport();
@@ -442,8 +444,8 @@ void setup() {
     CustomKey_8Equals,
     CustomKey_9Question,
     CustomKey_0Hash,
-    CustomKey_PlusDollar,
-    CustomKey_TimesAt);
+    CustomKey_TimesDollar,
+    CustomKey_PlusAt);
 
   // Register leader.
   static const kaleidoscope::plugin::Leader::dictionary_t leader_dictionary[] PROGMEM =
