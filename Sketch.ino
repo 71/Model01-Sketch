@@ -109,23 +109,24 @@ enum { PRIMARY,
  */
 // *INDENT-OFF*
 
-DEFINE_CUSTOM_KEY(2Minus,       Key_2,              Key_Minus,         Consumer_MediaSelection);
-DEFINE_CUSTOM_KEY(3Underscore,  Key_3,              LSHIFT(Key_Minus), Consumer_MediaSelectComputer);
-DEFINE_CUSTOM_KEY(4Slash,       Key_4,              Key_Slash,         Consumer_MediaSelectTV);
-DEFINE_CUSTOM_KEY(5Pipe,        Key_5,              Key_Pipe,          Consumer_MediaSelectWww);
-DEFINE_CUSTOM_KEY(8Equals,      Key_8,              Key_Equals,        Consumer_MediaSelectTelephone);
-DEFINE_CUSTOM_KEY(9Question,    Key_9,              LSHIFT(Key_Slash), Consumer_MediaSelectProgramGuide);
-DEFINE_CUSTOM_KEY(0Hash,        Key_0,              LSHIFT(Key_3),     Consumer_MediaSelectVideoPhone);
-DEFINE_CUSTOM_KEY(TimesDollar,  LSHIFT(Key_8),      LSHIFT(Key_4),     Consumer_MediaSelectMessages);
-DEFINE_CUSTOM_KEY(PlusAt,       LSHIFT(Key_Equals), LSHIFT(Key_2),     Consumer_MediaSelectGames);
+DEFINE_CUSTOM_KEY(2Minus,       Key_2,                Key_Minus,         Consumer_MediaSelection);
+DEFINE_CUSTOM_KEY(3Underscore,  Key_3,                LSHIFT(Key_Minus), Consumer_MediaSelectComputer);
+DEFINE_CUSTOM_KEY(4Slash,       Key_4,                Key_Slash,         Consumer_MediaSelectTV);
+DEFINE_CUSTOM_KEY(5Pipe,        Key_5,                Key_Pipe,          Consumer_MediaSelectWww);
+DEFINE_CUSTOM_KEY(8Equals,      Key_8,                Key_Equals,        Consumer_MediaSelectTelephone);
+DEFINE_CUSTOM_KEY(9Question,    Key_9,                LSHIFT(Key_Slash), Consumer_MediaSelectProgramGuide);
+DEFINE_CUSTOM_KEY(0Hash,        Key_0,                LSHIFT(Key_3),     Consumer_MediaSelectVideoPhone);
+DEFINE_CUSTOM_KEY(TimesDollar,  LSHIFT(Key_8),        LSHIFT(Key_4),     Consumer_MediaSelectMessages);
+DEFINE_CUSTOM_KEY(PlusAt,       LSHIFT(Key_Equals),   LSHIFT(Key_2),     Consumer_MediaSelectGames);
+DEFINE_CUSTOM_KEY(TildePercent, LSHIFT(Key_Backtick), LSHIFT(Key_5),     Consumer_MediaSelectCd);
 
 KEYMAPS(
   [PRIMARY] = KEYMAP_STACKED
-  (Key_Escape,      Key_1,         CustomKey_2Minus, CustomKey_3Underscore, CustomKey_4Slash, CustomKey_5Pipe,      CustomKey_TimesDollar,
-   LSHIFT(Key_5),   Key_X,         Key_Y,            Key_D,                 Key_Comma,        Key_Period, Key_Tab,
-   Key_PageUp,      Key_A,         Key_T,            Key_H,                 Key_E,            Key_B,
-   Key_PageDown,    Key_P,         Key_V,            Key_G,                 Key_W,            Key_K,                LEAD(0),
-   Key_LeftShift,   Key_Backspace, Key_Spacebar,     Key_LeftControl,
+  (Key_Escape,             Key_1,         CustomKey_2Minus, CustomKey_3Underscore, CustomKey_4Slash, CustomKey_5Pipe,      CustomKey_TimesDollar,
+   CustomKey_TildePercent, Key_X,         Key_Y,            Key_D,                 Key_Comma,        Key_Period,           Key_Tab,
+   Key_PageUp,             Key_A,         Key_T,            Key_H,                 Key_E,            Key_B,
+   Key_PageDown,           Key_P,         Key_V,            Key_G,                 Key_W,            Key_K,                LEAD(0),
+   Key_LeftShift,          Key_Backspace, Key_Spacebar,     Key_LeftControl,
    M(MACRO_TO_AUX_LAYER_1),
 
    CustomKey_PlusAt,  Key_6,        Key_7,        CustomKey_8Equals, CustomKey_9Question, CustomKey_0Hash, ___,
@@ -445,7 +446,8 @@ void setup() {
     CustomKey_9Question,
     CustomKey_0Hash,
     CustomKey_TimesDollar,
-    CustomKey_PlusAt);
+    CustomKey_PlusAt,
+    CustomKey_TildePercent);
 
   // Register leader.
   static const kaleidoscope::plugin::Leader::dictionary_t leader_dictionary[] PROGMEM =

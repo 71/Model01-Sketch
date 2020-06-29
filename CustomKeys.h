@@ -1,6 +1,8 @@
 #include "Kaleidoscope.h"
 #include "Kaleidoscope/hid.h"
 
+// Find extra keys you don't need to assign to 'appearAs':
+// https://github.com/keyboardio/Kaleidoscope/blob/master/src/kaleidoscope/key_defs_consumerctl.h
 #define DEFINE_CUSTOM_KEY(keyName, unshifted, shifted, appearAs) \
   constexpr CustomKey CustomKey_ ## keyName PROGMEM = CustomKey(appearAs, unshifted, shifted)
 
