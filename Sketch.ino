@@ -14,11 +14,8 @@
 #include "Kaleidoscope-Leader.h"
 
 #include "Kaleidoscope-LEDControl.h"
-#include "Kaleidoscope-LEDEffect-Breathe.h"
-#include "Kaleidoscope-LEDEffect-Chase.h"
 #include "Kaleidoscope-LEDEffect-Rainbow.h"
-#include "Kaleidoscope-LED-Palette-Theme.h"
-#include "Kaleidoscope-Colormap.h"
+#include "Kaleidoscope-LEDEffect-SolidColor.h"
 
 #include "Kaleidoscope-HostPowerManagement.h"
 #include "Kaleidoscope-HostOS.h"
@@ -46,7 +43,8 @@ enum { MACRO_VERSION_INFO,
        MACRO_TO_AUX_LAYER_1,
        MACRO_TO_AUX_LAYER_2,
        MACRO_TO_GUI,
-       MACRO_FROM_GUI,
+       MACRO_TO_SGUI,
+       MACRO_CYCLE_LED,
      };
 
 
@@ -98,11 +96,10 @@ enum { MACRO_VERSION_INFO,
   *
   */
 enum { PRIMARY,
+       QWERTY,
        FUNCTION,
        AUX,
-       GUI,
      };
-
 
 /* This comment temporarily turns off astyle's indent enforcement
  *   so we can make the keymaps actually resemble the physical key layout better
@@ -126,7 +123,7 @@ KEYMAPS(
    CustomKey_TildePercent, Key_X,         Key_Y,            Key_D,                 Key_Comma,        Key_Period,           Key_Tab,
    Key_PageUp,             Key_A,         Key_T,            Key_H,                 Key_E,            Key_B,
    Key_PageDown,           Key_P,         Key_V,            Key_G,                 Key_W,            Key_K,                LEAD(0),
-   Key_LeftShift,          Key_Backspace, Key_Spacebar,     Key_LeftControl,
+   Key_LeftShift,          Key_Spacebar,  Key_LeftAlt,      Key_LeftControl,
    M(MACRO_TO_AUX_LAYER_1),
 
    CustomKey_PlusAt,  Key_6,        Key_7,        CustomKey_8Equals, CustomKey_9Question, CustomKey_0Hash, ___,
@@ -136,12 +133,27 @@ KEYMAPS(
    Key_LeftAlt,       Key_Spacebar, Key_Enter,    Key_RightShift,
    M(MACRO_TO_AUX_LAYER_2)),
 
-  [FUNCTION] = KEYMAP_STACKED
-  (XXX,              Key_F1,           Key_F2,        Key_F3,          Key_F4,               Key_F5,                Key_LEDEffectNext,
-   Key_Tab,          XXX,              Key_mouseUp,   XXX,             LSHIFT(Key_9),        LSHIFT(Key_0),         XXX,
-   Key_Home,         Key_mouseL,       Key_mouseDn,   Key_mouseR,      Key_LeftBracket,      Key_RightBracket,
-   Key_End,          Key_PrintScreen,  Key_Backtick,  Key_Backslash,   Key_LeftCurlyBracket, Key_RightCurlyBracket, XXX,
-   Key_RightControl, Key_Delete,       XXX,           M(MACRO_TO_GUI),
+  [QWERTY] = KEYMAP_STACKED
+  (___, ___,   ___,   ___,   ___,   ___,   ___,
+   ___, Key_Q, Key_W, Key_E, Key_R, Key_T, ___,
+   ___, Key_A, Key_S, Key_D, Key_F, Key_G,
+   ___, Key_Z, Key_X, Key_C, Key_V, Key_B, ___,
+   ___, ___,   ___,   ___,
+   ___,
+
+   ___, ___,   ___,   ___,   ___,   ___,   ___,
+   ___, Key_Y, Key_U, Key_I, Key_O, Key_P, ___,
+        Key_H, Key_J, Key_K, Key_L, ___,   ___,
+   ___, Key_N, Key_M, ___,   ___,   ___,   ___,
+   ___, ___,   ___,   ___,
+   ___),
+
+  [FUNCTION] = KEYMAP_STACKED   
+  (XXX,              Key_F1,           Key_F2,           Key_F3,          Key_F4,               Key_F5,                M(MACRO_CYCLE_LED),
+   Key_Tab,          XXX,              Key_mouseUp,      XXX,             LSHIFT(Key_9),        LSHIFT(Key_0),         XXX,
+   Key_Home,         Key_Backspace,    Key_Delete,       Key_mouseR,      Key_LeftBracket,      Key_RightBracket,
+   Key_End,          Key_PrintScreen,  Key_Backtick,     Key_Backslash,   Key_LeftCurlyBracket, Key_RightCurlyBracket, XXX,
+   Key_RightControl, Key_Enter,        M(MACRO_TO_SGUI), M(MACRO_TO_GUI),
    ___,
 
    M(MACRO_CHANGE_OS), Key_F6,                     Key_F7,                   Key_F8,                   Key_F9,                 Key_F10,                 Key_F11,
@@ -157,12 +169,11 @@ KEYMAPS(
     ___, ___, ___, ___, ___, ___,                         Key_Keypad0, Key_Keypad4, Key_Keypad5, Key_Keypad6, ___, ___,
     ___, ___, ___, ___, ___, ___, ___,           ___,     ___,         Key_Keypad7, Key_Keypad8, Key_Keypad9, ___, Key_Enter,
     ___, ___, ___, ___,                          ___,     ___, ___, ___,
-    ___,                                         ___)
+    ___,                                         ___),
 )
 
 /* Re-enable astyle's indent enforcement */
 // *INDENT-ON*
-
 
 /** macroAction dispatches keymap events that are tied to a macro
     to that macro. It takes two uint8_t parameters.
@@ -179,6 +190,7 @@ const macro_t* macroAction(uint8_t macroIndex, uint8_t keyState) {
   static bool isFn1Pressed = false;
   static bool isFn2Pressed = false;
   static bool isInGui = false;
+  bool shiftHeld = false;
 
   switch (macroIndex) {
 
@@ -197,6 +209,20 @@ const macro_t* macroAction(uint8_t macroIndex, uint8_t keyState) {
     }
     break;
 
+  case MACRO_CYCLE_LED:
+    if (keyToggledOn(keyState)) {
+      LEDControl.next_mode();
+
+      if (LEDControl.get_mode_index() == 2) {
+        Layer.activate(QWERTY);
+      } else {
+        Layer.deactivate(QWERTY);
+      }
+    }
+    break;
+
+  case MACRO_TO_SGUI:
+    shiftHeld = true;
   case MACRO_TO_GUI:
     if (keyToggledOn(keyState)) {
       isInGui = true;
@@ -204,6 +230,9 @@ const macro_t* macroAction(uint8_t macroIndex, uint8_t keyState) {
       Layer.deactivate(FUNCTION);
 
       kaleidoscope::hid::pressRawKey(Key_LeftGui);
+      if (shiftHeld) {
+        kaleidoscope::hid::pressRawKey(Key_LShift);
+      }
       kaleidoscope::hid::sendKeyboardReport();
     } else if (keyToggledOff(keyState)) {
       isInGui = false;
@@ -213,9 +242,15 @@ const macro_t* macroAction(uint8_t macroIndex, uint8_t keyState) {
       }
 
       kaleidoscope::hid::releaseRawKey(Key_LeftGui);
+      if (shiftHeld) {
+        kaleidoscope::hid::releaseRawKey(Key_LShift);
+      }
       kaleidoscope::hid::sendKeyboardReport();
     } else if (keyIsPressed(keyState)) {
       kaleidoscope::hid::pressRawKey(Key_LeftGui);
+      if (shiftHeld) {
+        kaleidoscope::hid::pressRawKey(Key_LShift);
+      }
       kaleidoscope::hid::sendKeyboardReport();      
     }
     break;
@@ -360,6 +395,8 @@ void systerAction(kaleidoscope::plugin::Syster::action_t action, const char *sym
 }
 
 
+static kaleidoscope::plugin::LEDSolidColor solidWhite(150, 150, 150);
+
 // First, tell Kaleidoscope which plugins you want to use.
 // The order can be important. For example, LED effects are
 // added in the order they're listed here.
@@ -377,24 +414,7 @@ KALEIDOSCOPE_INIT_PLUGINS(
   // The rainbow wave effect lights up your keyboard with all the colors of a rainbow
   // and slowly moves the rainbow across your keyboard
   LEDRainbowWaveEffect,
-
-  // The rainbow effect changes the color of all of the keyboard's keys at the same time
-  // running through all the colors of the rainbow.
-  LEDRainbowEffect,
-
-  // The chase effect follows the adventure of a blue pixel which chases a red pixel across
-  // your keyboard. Spoiler: the blue pixel never catches the red pixel
-  LEDChaseEffect,
-
-  // The breathe effect slowly pulses all of the LEDs on your keyboard
-  LEDBreatheEffect,
-
-  // The LED Palette Theme plugin provides a shared palette for other plugins,
-  // like Colormap below
-  LEDPaletteTheme,
-
-  // The Colormap effect makes it possible to set up per-layer colormaps
-  ColormapEffect,
+  solidWhite,
 
   // The macros plugin adds support for macros
   Macros,
@@ -423,18 +443,12 @@ void setup() {
 
   // We set the brightness of the rainbow effects to 150 (on a scale of 0-255)
   // This draws more than 500mA, but looks much nicer than a dimmer effect
-  LEDRainbowEffect.brightness(150);
   LEDRainbowWaveEffect.brightness(150);
 
   // We want to make sure that the firmware starts with LED effects off
   // This avoids over-taxing devices that don't have a lot of power to share
   // with USB devices
   LEDOff.activate();
-
-  // We need to tell the Colormap plugin how many layers we want to have custom
-  // maps for. To make things simple, we set it to five layers, which is how
-  // many editable layers we have (see above).
-  ColormapEffect.max_layers(3);
 
   // Register custom keys.
   REGISTER_CUSTOM_KEYS(
