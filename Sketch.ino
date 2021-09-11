@@ -22,7 +22,7 @@
 #include "Kaleidoscope-Syster.h"
 #include "Kaleidoscope-Unicode.h"
 
-#include "Kaleidoscope/hid.h"
+#include "Kaleidoscope.h"
 #include "CustomKeys.h"
 
 
@@ -130,7 +130,7 @@ KEYMAPS(
    Key_RightControl,  Key_Z,        Key_Q, Key_M, Key_L,             Key_U,               ___,
                       Key_F,        Key_S, Key_N, Key_O,             Key_I,               ___,
    SYSTER,            Key_J,        Key_R, Key_C, Key_Semicolon,     Key_Quote,           ___,
-   Key_LeftAlt,       Key_Spacebar, Key_Enter,    Key_RightShift,
+   Key_LeftAlt,       Key_Spacebar, Key_Enter,    Key_RightAlt,
    M(MACRO_TO_AUX_LAYER_2)),
 
   [QWERTY] = KEYMAP_STACKED
@@ -229,11 +229,11 @@ const macro_t* macroAction(uint8_t macroIndex, uint8_t keyState) {
 
       Layer.deactivate(FUNCTION);
 
-      kaleidoscope::hid::pressRawKey(Key_LeftGui);
+      kaleidoscope::Runtime.hid().keyboard().pressRawKey(Key_LeftGui);
       if (shiftHeld) {
-        kaleidoscope::hid::pressRawKey(Key_LShift);
+        kaleidoscope::Runtime.hid().keyboard().pressRawKey(Key_LShift);
       }
-      kaleidoscope::hid::sendKeyboardReport();
+      kaleidoscope::Runtime.hid().keyboard().sendReport();
     } else if (keyToggledOff(keyState)) {
       isInGui = false;
 
@@ -241,17 +241,17 @@ const macro_t* macroAction(uint8_t macroIndex, uint8_t keyState) {
         Layer.activate(FUNCTION);
       }
 
-      kaleidoscope::hid::releaseRawKey(Key_LeftGui);
+      kaleidoscope::Runtime.hid().keyboard().releaseRawKey(Key_LeftGui);
       if (shiftHeld) {
-        kaleidoscope::hid::releaseRawKey(Key_LShift);
+        kaleidoscope::Runtime.hid().keyboard().releaseRawKey(Key_LShift);
       }
-      kaleidoscope::hid::sendKeyboardReport();
+      kaleidoscope::Runtime.hid().keyboard().sendReport();
     } else if (keyIsPressed(keyState)) {
-      kaleidoscope::hid::pressRawKey(Key_LeftGui);
+      kaleidoscope::Runtime.hid().keyboard().pressRawKey(Key_LeftGui);
       if (shiftHeld) {
-        kaleidoscope::hid::pressRawKey(Key_LShift);
+        kaleidoscope::Runtime.hid().keyboard().pressRawKey(Key_LShift);
       }
-      kaleidoscope::hid::sendKeyboardReport();      
+      kaleidoscope::Runtime.hid().keyboard().sendReport();      
     }
     break;
 
@@ -316,10 +316,10 @@ void toggleLedsOnSuspendResume(kaleidoscope::plugin::HostPowerManagement::Event 
   case kaleidoscope::plugin::HostPowerManagement::Suspend:
     LEDControl.set_all_leds_to({0, 0, 0});
     LEDControl.syncLeds();
-    LEDControl.paused = true;
+    LEDControl.disable();
     break;
   case kaleidoscope::plugin::HostPowerManagement::Resume:
-    LEDControl.paused = false;
+    LEDControl.enable();
     LEDControl.refreshAll();
     break;
   case kaleidoscope::plugin::HostPowerManagement::Sleep:
@@ -338,17 +338,17 @@ void hostPowerManagementEventHandler(kaleidoscope::plugin::HostPowerManagement::
 void systerAction(kaleidoscope::plugin::Syster::action_t action, const char *symbol) {
   switch (action) {
   case kaleidoscope::plugin::Syster::StartAction:
-    handleKeyswitchEvent(Key_Slash, UNKNOWN_KEYSWITCH_LOCATION, IS_PRESSED | INJECTED);
-    kaleidoscope::hid::sendKeyboardReport();
-    handleKeyswitchEvent(Key_Slash, UNKNOWN_KEYSWITCH_LOCATION, WAS_PRESSED | INJECTED);
-    kaleidoscope::hid::sendKeyboardReport();
+    handleKeyswitchEvent(Key_Slash, UnknownKeyswitchLocation, IS_PRESSED | INJECTED);
+    kaleidoscope::Runtime.hid().keyboard().sendReport();
+    handleKeyswitchEvent(Key_Slash, UnknownKeyswitchLocation, WAS_PRESSED | INJECTED);
+    kaleidoscope::Runtime.hid().keyboard().sendReport();
     break;
 
   case kaleidoscope::plugin::Syster::EndAction:
-    handleKeyswitchEvent(Key_Backspace, UNKNOWN_KEYSWITCH_LOCATION, IS_PRESSED | INJECTED);
-    kaleidoscope::hid::sendKeyboardReport();
-    handleKeyswitchEvent(Key_Backspace, UNKNOWN_KEYSWITCH_LOCATION, WAS_PRESSED | INJECTED);
-    kaleidoscope::hid::sendKeyboardReport();
+    handleKeyswitchEvent(Key_Backspace, UnknownKeyswitchLocation, IS_PRESSED | INJECTED);
+    kaleidoscope::Runtime.hid().keyboard().sendReport();
+    handleKeyswitchEvent(Key_Backspace, UnknownKeyswitchLocation, WAS_PRESSED | INJECTED);
+    kaleidoscope::Runtime.hid().keyboard().sendReport();
     break;
 
   case kaleidoscope::plugin::Syster::SymbolAction:
