@@ -12,10 +12,11 @@
       {
         devShell = pkgs.mkShell {
           shellHook = ''
+            alias generate-keymaps='${pkgs.deno}/bin/deno run --allow-read=./README.md --allow-write=./Sketch/Keymaps.h ./generateKeymaps.ts'
             alias arduinocli='${pkgs.arduino-cli}/bin/arduino-cli --additional-urls https://raw.githubusercontent.com/keyboardio/boardsmanager/master/package_keyboardio_index.json'
 
             arduinocli core update-index
-            arduinocli core install keyboardio:avr@1.99.3 arduino:avr
+            arduinocli core install keyboardio:avr@1.99.5 arduino:avr
 
             alias compile-sketch='arduinocli compile --fqbn keyboardio:avr:model01 Sketch/Sketch.ino'
             alias flash-sketch='echo press escape and wait... && arduinocli upload --fqbn keyboardio:avr:model01 Sketch/Sketch.ino -p'
