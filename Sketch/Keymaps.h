@@ -6,7 +6,7 @@ KEYMAPS(
    CS(9), Key_X, Key_Y, Key_D, Key_Comma, Key_Period, Key_Tab, XXX, Key_Z, Key_Q, Key_M, Key_L, Key_U, XXX,
    XXX, Key_A, Key_T, Key_H, Key_E, Key_B, Key_F, Key_S, Key_N, Key_O, Key_I, Key_PageUp,
    Key_LeftGui, Key_P, Key_V, Key_G, Key_W, Key_K, XXX, Key_RightAlt, Key_J, Key_R, Key_C, Key_Semicolon, Key_Quote, Key_PageDown,
-   Key_LeftShift, Key_Spacebar, Key_Backspace, Key_LeftAlt, Key_LeftControl, Key_LeftAlt, Key_Enter, Key_LeftShift,
+   Key_LeftShift, Key_Spacebar, Key_LeftAlt, Key_LeftControl, Key_LeftControl, Key_LeftAlt, Key_Enter, Key_LeftShift,
    ShiftToLayer(FN_L), ShiftToLayer(FN_R)),
 
   [QWERTY] = KEYMAP

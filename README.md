@@ -12,7 +12,6 @@ Layers:
 - Fn Right
 - Fn Both
 
-TODO: left-gui pressed, no custom key shift
 ```
 Escape         1          2-Minus   3-Underscore  4-Slash      5-Pipe        Times-Dollar                     Plus-At      6        7        8-Equals  9-Question  0-Hash  _
 ^              ^          ^         ^             ^            ^             ^                                ^            ^        ^        ^         ^           ^       ^
@@ -42,7 +41,7 @@ LeftGui        P          V         G             W            K             _  
 ^              ^          ^         ^             ^            ^             ^                                ^            ^        ^        ^         ^           ^       ^
 
 
--              -          -         LeftShift     Spacebar     Backspace     LeftAlt                          LeftControl  LeftAlt  Enter    LeftShift -           -       -
+-              -          -         LeftShift     Spacebar     LeftAlt       LeftControl                      LeftControl  LeftAlt  Enter    LeftShift -           -       -
 -              -          -         ^             ^            ^             ^                                ^            ^        ^        ^         -           -       -
 -              -          -         ^             ^            ^             ^                                ^            ^        ^        ^         -           -       -
 -              -          -         ^             ^            ^             ^                                ^            ^        ^        ^         -           -       -

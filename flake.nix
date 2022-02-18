@@ -19,7 +19,7 @@
             arduinocli core install keyboardio:avr@1.99.5 arduino:avr
 
             alias compile-sketch='arduinocli compile --fqbn keyboardio:avr:model01 Sketch/Sketch.ino'
-            alias flash-sketch='echo press escape and wait... && arduinocli upload --fqbn keyboardio:avr:model01 Sketch/Sketch.ino -p'
+            alias flash-sketch='sudo compile-sketch && echo press escape and wait... && sudo arduinocli upload --fqbn keyboardio:avr:model01 Sketch/Sketch.ino -p'
             alias list-boards='arduinocli board list'
 
             echo available commands: compile-sketch flash-sketch list-boards
